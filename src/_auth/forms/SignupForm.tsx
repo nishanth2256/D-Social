@@ -67,7 +67,7 @@ const SignupForm = () => {
   return (
       <Form {...form}>
         <div className="sm:w-420 flex-center flex-col">
-          <img src="/assets/images/dsocial.png" alt="logo" />
+          <img src="/assets/images/dsocial.png" alt="logo" height={150} width={350}/>
 
           <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">Create a new account</h2>
           <p className="text-red-1 small-medium md:base-regular mt-2">To use Beinsta,Please enter your details</p>
