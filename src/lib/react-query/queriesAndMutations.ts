@@ -1,5 +1,5 @@
 import {useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
-import { createUserAccount, signInAccount, signOutAccount, createPost, getRecentPosts, likePost, savePost, deleteSavedPost, getCurrentUser, getPostById, updatePost, deletePost, getInfinitePosts, searchPosts, getUsers, getUserById, updateUser, getUserPosts, commentPost, followUser, unfollowUser, getFollowers, getFollowing } from '../appwrite/api'
+import { createUserAccount, signInAccount, signOutAccount, createPost, getRecentPosts, likePost, savePost, deleteSavedPost, getCurrentUser, getPostById, updatePost, deletePost, getInfinitePosts, searchPosts, getUsers, getUserById, updateUser, getUserPosts, commentPost, followUser, unfollowUser, getFollowers, getFollowing, createComment } from '../appwrite/api'
 import { IFollowUser, INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
 import { QUERY_KEYS } from './queryKeys';
 import exp from 'constants';
@@ -340,52 +340,5 @@ export const useGetFollowing = (userId?: string) => {
 
 
 
-  export const useCommentPost = () => {
-    const queryClient = useQueryClient();
+ 
 
-    return useMutation({
-        mutationFn: ({ userId, postId, commentsArray }: { userId: string; postId: string; commentsArray: Comment[] }) =>
-            commentPost(userId, postId, commentsArray),
-        onSuccess: (data) => {
-            queryClient.invalidateQueries({
-                queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id]
-            });
-            queryClient.invalidateQueries({
-                queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
-            });
-            queryClient.invalidateQueries({
-                queryKey: [QUERY_KEYS.GET_POSTS]
-            });
-            queryClient.invalidateQueries({
-                queryKey: [QUERY_KEYS.GET_CURRENT_USER]
-            });
-        }
-    });
-};
-
-
-// export const useCommentPost = () => {
-//   const queryClient = useQueryClient();
-  
-//   return useMutation({
-//     mutationFn: ({post, user, textContent}: {post: string; user: string; textContent: string;}) => {
-//       console.log("Running mutation with values:", { post, user, textContent });
-//       return commentPost(post, user, textContent);
-//     },
-//     onSuccess: () => {
-//       console.log("Mutation succeeded with result:", queryClient);
-//       queryClient.invalidateQueries({
-//         queryKey: [QUERY_KEYS.GET_POST_BY_ID],
-//       });
-//       queryClient.invalidateQueries({
-//         queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
-//       });
-//       queryClient.invalidateQueries({
-//         queryKey: [QUERY_KEYS.GET_POSTS],
-//       });
-//       queryClient.invalidateQueries({
-//         queryKey: [QUERY_KEYS.GET_CURRENT_USER],
-//       });
-//     },
-//   });
-// };

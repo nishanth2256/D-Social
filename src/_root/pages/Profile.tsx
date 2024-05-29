@@ -276,7 +276,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
+      <hr className="border w-full border-light-6/60" />
       {currentUser.$id === user?.id && (
         <div className="flex max-w-5xl w-full">
           <Link
