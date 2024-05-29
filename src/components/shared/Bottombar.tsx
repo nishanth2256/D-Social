@@ -13,7 +13,7 @@ const Bottombar = () => {
                         <Link 
                             to={link.route} 
                             key={link.label} 
-                            className={`text-light-1 ${isActive && 'bg-primary-500 rounded-[10px]' } flex-center flex-col gap-1 p-2 transition`}
+                            className={`text-light-1 ${isActive && 'bg-red-1 rounded-[10px]' } flex-center flex-col gap-1 p-2 transition`}
                         >
                             <img src={link.imgURL} alt={link.label} 
                             width={16}
