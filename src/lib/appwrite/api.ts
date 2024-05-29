@@ -1,7 +1,8 @@
 import { ID, Query } from 'appwrite';
 
 import {  appwriteConfig, account, databases, storage, avatars } from './config';
-import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
+import { IFollowUser, INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
+import { useQuery } from '@tanstack/react-query';
 
 export async function createUserAccount(user: INewUser) {
     try {
@@ -383,6 +384,7 @@ export async function deletePost(postId?: string, imageId?: string) {
             appwriteConfig.databaseId,
             appwriteConfig.postCollectionId,
             [Query.search('caption', searchTerm)]
+            
         )
 
         if(!posts) throw Error;
@@ -508,3 +510,144 @@ export async function getUserPosts(userId?: string) {
       console.log(error);
     }
   }
+
+
+  export async function followUser(followerId: string, followingId: string) {
+    try {
+        const followDocument = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.followCollectionId,
+            ID.unique(),
+            {
+                followerId: followerId,
+                followingId: followingId,
+            }
+        );
+
+        if (!followDocument) throw new Error("Error creating follow document");
+
+        return followDocument;
+    } catch (error) {
+        console.error("Error following user:", error);
+    }
+}
+
+export async function unfollowUser(followerId: string, followingId: string) {
+  try {
+      // Query the follow collection to find the document matching the follower and following IDs
+      const response = await databases.listDocuments(
+          appwriteConfig.databaseId,             
+          appwriteConfig.followCollectionId,      
+          [`equal("followerId", "${followerId}")`, `equal("followingId", "${followingId}")`]
+      );
+
+      
+      if (response.documents.length === 0) {
+          throw new Error("Follow relationship not found");
+      }
+
+      
+      const followDocumentId = response.documents[0].$id;
+
+      // Delete the follow document
+      await databases.deleteDocument(
+          appwriteConfig.databaseId,              
+          appwriteConfig.followCollectionId,      
+          followDocumentId                        
+      );
+
+      return { message: "Unfollow successful" };
+  } catch (error) {
+      console.error("Error unfollowing user:", error);
+      throw new Error("Failed to unfollow user");
+  }
+}
+
+export async function getFollowers(userId: string): Promise<IFollowUser[]> {
+  try {
+      // Query the follow collection to find documents where the specified user is being followed
+      const response = await databases.listDocuments(
+          appwriteConfig.databaseId,             
+          appwriteConfig.followCollectionId,      
+          [`equal("followingId", "${userId}")`]  
+      );
+
+      // Map the response documents to the Follow type
+      const followers: IFollowUser[] = response.documents.map((doc: any) => ({
+          id: doc.$id,
+          followerId: doc.followerId,
+          followingId: doc.followingId
+      }));
+
+      return followers;
+  } catch (error) {
+      console.error("Error retrieving followers:", error);
+      throw new Error("Failed to retrieve followers");
+  }
+}
+
+export async function getFollowing(userId: string): Promise<IFollowUser[]> {
+  try {
+      // Query the follow collection to find documents where the specified user is the follower
+      const response = await databases.listDocuments(
+          appwriteConfig.databaseId,              // ID of the database
+          appwriteConfig.followCollectionId,       // ID of the collection for follow relationships
+          [`equal("followerId", "${userId}")`]   // Query filter to match the followerId with the userId
+      );
+
+      // Map the response documents to the Follow type
+      const following: IFollowUser[] = response.documents.map((doc: any) => ({
+          id: doc.$id,
+          followerId: doc.followerId,
+          followingId: doc.followingId,
+      }));
+
+      return following;
+  } catch (error) {
+      console.error("Error retrieving following list:", error);
+      throw new Error("Failed to retrieve following list");
+  }
+}
+
+  
+
+  export async function commentPost(userId: string, postId: string, commentsArray: Comment[]) {
+    try {
+        const newComment = await databases.createDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            ID.unique(),
+            {
+                user: userId,
+                post: postId,
+                comment: commentsArray,
+            }
+        );
+        if (!newComment) throw new Error('Failed to create new comment');
+        return newComment;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+// export async function commentPost(postId: string, userId: string, textContent: string) {
+//   try {
+//     console.log("Creating comment with values:", { postId, userId, textContent, newComment: true });
+//     const newComment = await databases.createDocument(
+//       appwriteConfig.databaseId,
+//       appwriteConfig.postCollectionId,
+//       ID.unique(),
+//       {
+//         post: postId,
+//         user: userId,
+//         textContent: textContent,
+//       }
+//     );
+
+//     if (!newComment) throw Error;
+//     return newComment;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

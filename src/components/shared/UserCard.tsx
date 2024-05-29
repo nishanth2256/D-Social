@@ -33,3 +33,5 @@ const UserCard = ({ user }: UserCardProps) => {
 };
 
 export default UserCard;
+
+

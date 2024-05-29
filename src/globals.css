@@ -270,6 +270,10 @@
     @apply bg-red-1 hover:bg-red-2 text-light-1 flex gap-3 !important;
   }
 
+  .shad-button_secondary {
+    @apply bg-red-3 hover:bg-red-4 text-light-1 flex gap-3 !important;
+  }
+
   .shad-button_dark_4 {
     @apply h-10 bg-dark-4 px-5 text-light-1 flex gap-3 !important;
   }

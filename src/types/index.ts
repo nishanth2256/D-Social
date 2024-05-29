@@ -57,3 +57,16 @@ export type INavLink = {
     username: string;
     password: string;
   };
+
+//   export interface Follow {
+//     id: string;
+//     followerId: string;
+//     followingId: string;
+//     createdAt: Date;
+// }
+
+export type IFollowUser = {
+  id: string;
+  followerId: string;
+  followingId: string;
+}

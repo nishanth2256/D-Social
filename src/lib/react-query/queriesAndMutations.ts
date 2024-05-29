@@ -1,7 +1,8 @@
 import {useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
-import { createUserAccount, signInAccount, signOutAccount, createPost, getRecentPosts, likePost, savePost, deleteSavedPost, getCurrentUser, getPostById, updatePost, deletePost, getInfinitePosts, searchPosts, getUsers, getUserById, updateUser, getUserPosts, } from '../appwrite/api'
-import { INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
+import { createUserAccount, signInAccount, signOutAccount, createPost, getRecentPosts, likePost, savePost, deleteSavedPost, getCurrentUser, getPostById, updatePost, deletePost, getInfinitePosts, searchPosts, getUsers, getUserById, updateUser, getUserPosts, commentPost, followUser, unfollowUser, getFollowers, getFollowing } from '../appwrite/api'
+import { IFollowUser, INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
 import { QUERY_KEYS } from './queryKeys';
+import exp from 'constants';
 
 // Creating user
 export const useCreateUserAccount = () => {
@@ -209,3 +210,182 @@ export const useGetUsers = (limit?: number) => {
       enabled: !!userId,
     });
   };
+
+
+
+//   export const useFollowUser = () => {
+//     const queryClient = useQueryClient();
+
+//     const followMutation = useMutation({
+//         mutationFn: ({ followerId, followingId }: { followerId: string; followingId: string }) =>
+//             followUser(followerId, followingId),
+//         onSuccess: () => {
+//           queryClient.invalidateQueries({ predicate: ['followers'] }); // Invalidate followers query
+//           queryClient.invalidateQueries({ predicate: ['following'] }); // Invalidate following query
+//         },
+//     });
+
+//     const unfollowMutation = useMutation({
+//         mutationFn: ({ followerId, followingId }: { followerId: string; followingId: string }) =>
+//             unfollowUser(followerId, followingId),
+//         onSuccess: () => {
+//             queryClient.invalidateQueries('followers'); // Invalidate followers query
+//             queryClient.invalidateQueries('following'); // Invalidate following query
+//         },
+//     });
+
+//     const followUserAction = (followerId: string, followingId: string) => {
+//         followMutation.mutate({ followerId, followingId });
+//     };
+
+//     const unfollowUserAction = (followerId: string, followingId: string) => {
+//         unfollowMutation.mutate({ followerId, followingId });
+//     };
+
+//     return { followUserAction, unfollowUserAction, followMutation, unfollowMutation };
+// };
+
+
+export const useFollowUser = () => {
+  const queryClient = useQueryClient();
+
+  const followMutation = useMutation({
+      mutationFn: ({ followerId, followingId }: { followerId: string; followingId: string }) =>
+          followUser(followerId, followingId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_FOLLOWERS], // Invalidate followers query 
+          });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_FOLLOWING], // Invalidate followers query 
+          });
+      },
+  });
+
+  const followUserAction = (followerId: string, followingId: string) => {
+      followMutation.mutate({ followerId, followingId });
+  };
+
+  return { followUserAction, followMutation };
+};
+
+export const useUnfollowUser = () => {
+  const queryClient = useQueryClient();
+
+  const unfollowMutation = useMutation({
+      mutationFn: ({ followerId, followingId }: { followerId: string; followingId: string }) =>
+          unfollowUser(followerId, followingId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_FOLLOWERS], // Invalidate followers query 
+          });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_FOLLOWING], // Invalidate followers query 
+          });
+      },
+  });
+
+  const unfollowUserAction = (followerId: string, followingId: string) => {
+      unfollowMutation.mutate({ followerId, followingId });
+  };
+
+  return { unfollowUserAction, unfollowMutation };
+};
+
+export const useGetFollowers = (userId?: string) => {
+  return useQuery({
+      queryKey: [QUERY_KEYS.GET_FOLLOWERS, userId],
+      queryFn: () => getFollowers(userId!),
+      enabled: !!userId,
+  });
+};
+
+export const useGetFollowing = (userId?: string) => {
+  return useQuery({
+      queryKey: [QUERY_KEYS.GET_FOLLOWING, userId],
+      queryFn: () => getFollowing(userId!),
+      enabled: !!userId, // Only run the query if userId is provided
+  });
+};
+
+
+
+
+  // export function useFollowUser(currentUserId: string): UseFollowUserResult {
+  //   const [followers, setFollowers] = useState<Follow[]>([]);
+  //   const [following, setFollowing] = useState<Follow[]>([]);
+  //   const [loading, setLoading] = useState<boolean>(false);
+  //   const [error, setError] = useState<string | null>(null);
+
+  //   useEffect(() => {
+  //       const fetchFollowData = async () => {
+  //           setLoading(true);
+  //           try {
+  //               const [followersList, followingList] = await Promise.all([
+  //                   getFollowers(currentUserId),
+  //                   getFollowing(currentUserId)
+  //               ]);
+  //               setFollowers(followersList);
+  //               setFollowing(followingList);
+  //               setError(null);
+  //           } catch (err) {
+  //               setError('Failed to load follow data');
+  //           } finally {
+  //               setLoading(false);
+  //           }
+  //       };
+
+  //       fetchFollowData();
+  //   }, [currentUserId]);
+
+
+
+  export const useCommentPost = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ userId, postId, commentsArray }: { userId: string; postId: string; commentsArray: Comment[] }) =>
+            commentPost(userId, postId, commentsArray),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id]
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_POSTS]
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_CURRENT_USER]
+            });
+        }
+    });
+};
+
+
+// export const useCommentPost = () => {
+//   const queryClient = useQueryClient();
+  
+//   return useMutation({
+//     mutationFn: ({post, user, textContent}: {post: string; user: string; textContent: string;}) => {
+//       console.log("Running mutation with values:", { post, user, textContent });
+//       return commentPost(post, user, textContent);
+//     },
+//     onSuccess: () => {
+//       console.log("Mutation succeeded with result:", queryClient);
+//       queryClient.invalidateQueries({
+//         queryKey: [QUERY_KEYS.GET_POST_BY_ID],
+//       });
+//       queryClient.invalidateQueries({
+//         queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
+//       });
+//       queryClient.invalidateQueries({
+//         queryKey: [QUERY_KEYS.GET_POSTS],
+//       });
+//       queryClient.invalidateQueries({
+//         queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+//       });
+//     },
+//   });
+// };

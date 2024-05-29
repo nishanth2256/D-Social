@@ -39,6 +39,8 @@ module.exports = {
         'grey-2': '#edeff0',
         'red-1': '#F13939',
         'red-2': '#db5a5a',
+        'red-3': '#f55858',
+        'red-4': '#f59393',
       },
       screens: {
         'xs': '480px',
