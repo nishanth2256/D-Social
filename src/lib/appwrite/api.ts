@@ -394,7 +394,7 @@ export async function deletePost(postId?: string, imageId?: string) {
         console.log(error)
     }
   }
-
+ // ===================================== GET USERS
   export async function getUsers(limit?: number) {
     const queries: any[] = [Query.orderDesc("$createdAt")];
   
