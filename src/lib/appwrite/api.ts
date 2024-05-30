@@ -513,6 +513,7 @@ export async function getUserPosts(userId?: string) {
   }
 
 
+    // ============================== FOLLOW USER
   export async function followUser(followerId: string, followingId: string) {
     try {
         const followDocument = await databases.createDocument(
@@ -533,6 +534,8 @@ export async function getUserPosts(userId?: string) {
     }
 }
 
+
+  // ============================== UNFOLLOW USER 
 export async function unfollowUser(followerId: string, followingId: string) {
   try {
       // Query the follow collection to find the document matching the follower and following IDs
@@ -564,6 +567,8 @@ export async function unfollowUser(followerId: string, followingId: string) {
   }
 }
 
+
+// ============================== GET FOLLOWERS BY ID
 export async function getFollowers(userId: string): Promise<IFollowUser[]> {
   try {
       // Query the follow collection to find documents where the specified user is being followed
@@ -587,13 +592,15 @@ export async function getFollowers(userId: string): Promise<IFollowUser[]> {
   }
 }
 
+
+// ============================== GET FOLLOWING BY ID
 export async function getFollowing(userId: string): Promise<IFollowUser[]> {
   try {
       // Query the follow collection to find documents where the specified user is the follower
       const response = await databases.listDocuments(
-          appwriteConfig.databaseId,              // ID of the database
-          appwriteConfig.followCollectionId,       // ID of the collection for follow relationships
-          [`equal("followerId", "${userId}")`]   // Query filter to match the followerId with the userId
+          appwriteConfig.databaseId,              
+          appwriteConfig.followCollectionId,       
+          [`equal("followerId", "${userId}")`]   
       );
 
       // Map the response documents to the Follow type
