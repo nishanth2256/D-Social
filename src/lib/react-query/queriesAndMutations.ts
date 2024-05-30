@@ -213,37 +213,6 @@ export const useGetUsers = (limit?: number) => {
 
 
 
-//   export const useFollowUser = () => {
-//     const queryClient = useQueryClient();
-
-//     const followMutation = useMutation({
-//         mutationFn: ({ followerId, followingId }: { followerId: string; followingId: string }) =>
-//             followUser(followerId, followingId),
-//         onSuccess: () => {
-//           queryClient.invalidateQueries({ predicate: ['followers'] }); // Invalidate followers query
-//           queryClient.invalidateQueries({ predicate: ['following'] }); // Invalidate following query
-//         },
-//     });
-
-//     const unfollowMutation = useMutation({
-//         mutationFn: ({ followerId, followingId }: { followerId: string; followingId: string }) =>
-//             unfollowUser(followerId, followingId),
-//         onSuccess: () => {
-//             queryClient.invalidateQueries('followers'); // Invalidate followers query
-//             queryClient.invalidateQueries('following'); // Invalidate following query
-//         },
-//     });
-
-//     const followUserAction = (followerId: string, followingId: string) => {
-//         followMutation.mutate({ followerId, followingId });
-//     };
-
-//     const unfollowUserAction = (followerId: string, followingId: string) => {
-//         unfollowMutation.mutate({ followerId, followingId });
-//     };
-
-//     return { followUserAction, unfollowUserAction, followMutation, unfollowMutation };
-// };
 
 
 export const useFollowUser = () => {
@@ -311,32 +280,7 @@ export const useGetFollowing = (userId?: string) => {
 
 
 
-  // export function useFollowUser(currentUserId: string): UseFollowUserResult {
-  //   const [followers, setFollowers] = useState<Follow[]>([]);
-  //   const [following, setFollowing] = useState<Follow[]>([]);
-  //   const [loading, setLoading] = useState<boolean>(false);
-  //   const [error, setError] = useState<string | null>(null);
 
-  //   useEffect(() => {
-  //       const fetchFollowData = async () => {
-  //           setLoading(true);
-  //           try {
-  //               const [followersList, followingList] = await Promise.all([
-  //                   getFollowers(currentUserId),
-  //                   getFollowing(currentUserId)
-  //               ]);
-  //               setFollowers(followersList);
-  //               setFollowing(followingList);
-  //               setError(null);
-  //           } catch (err) {
-  //               setError('Failed to load follow data');
-  //           } finally {
-  //               setLoading(false);
-  //           }
-  //       };
-
-  //       fetchFollowData();
-  //   }, [currentUserId]);
 
 
 
