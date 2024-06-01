@@ -194,6 +194,7 @@ export async function getRecentPosts() {
     return posts;
 }
 
+// ============================== LIKE POST
 export async function likePost(postId:string, likesArray: string[]) {
     try {
         const  updatedPost = await databases.updateDocument(
@@ -353,7 +354,7 @@ export async function deletePost(postId?: string, imageId?: string) {
     }
   }
 
-  // ============================== GET ININITE POST
+  // ============================== GET INFINITE POST
   export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
     const queries: any[] = [Query.orderDesc('$updatedAt'), Query.limit(10)]
 
@@ -376,7 +377,7 @@ export async function deletePost(postId?: string, imageId?: string) {
     }
   }
 
-
+  // ============================== SEARCH POST
   export async function searchPosts(searchTerm: string) {
 
     try {
