@@ -182,6 +182,8 @@ export async function deleteFile(fileId: string) {
     }
 }
 
+
+// ============================= GET RECENT POSTS
 export async function getRecentPosts() {
     const posts = await databases.listDocuments(
         appwriteConfig.databaseId,
