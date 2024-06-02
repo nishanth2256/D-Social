@@ -172,6 +172,8 @@ export function getFilePreview(fileId: string) {
     }
 }
 
+
+// ============================= DELETE FILES
 export async function deleteFile(fileId: string) {
     try {
         await storage.deleteFile(appwriteConfig.storageId, fileId);
